@@ -100,6 +100,7 @@ class ArithmeticActivity : AbstractServiceView() {
                 {
 
                     val interruptionLength = (json.get("content") as Number).toLong().times(1000)
+                    println(interruptionLength.toString())
 
                     showFlash(true)
 
@@ -109,8 +110,8 @@ class ArithmeticActivity : AbstractServiceView() {
 
                     val timer = Timer()
 
-                    // Shows a new equation every 5 seconds
-                    Timer().schedule(300) {
+                    // Shows a new equation every 5 seconds, after an initial delay of 500ms
+                    Timer().schedule(500) {
                         showFlash(false)
                         setTextVisible(true)
 
@@ -142,7 +143,7 @@ class ArithmeticActivity : AbstractServiceView() {
                         jsonObj.put("time", time.toString())
                         jsonObj.put("errorCountInterruption", this@ArithmeticActivity.errorCount)
 
-                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "web client")
+                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "lens")
 
                         runOnUiThread {
                             this@ArithmeticActivity.tableRow?.visibility = View.INVISIBLE
