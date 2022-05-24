@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cerg.mnv" android:installLocation="auto">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:label="InterruptionTask Pills">
+    <application android:label="InterruptionTask">
         <service android:enabled="true" android:exported="false" android:name=".service.NetworkingService"/>
         <activity android:name=".view.MainActivity" android:configChanges="orientation|screenSize">
             <intent-filter>

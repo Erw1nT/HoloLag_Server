@@ -87,7 +87,7 @@ class ArithmeticActivity : AbstractServiceView() {
                         this@ArithmeticActivity.startActivity(Intent(this@ArithmeticActivity, CalibrationActivity::class.java))
                     }
                 }
-                else if (json.get("content") is JSONObject) //resetInterruptionTaskIndex from web client
+                else if (json.get("content") is JSONObject && (json.get("content") as JSONObject).has("resetInterruptionTaskIndex")) //resetInterruptionTaskIndex from web client
                 {
                     val isResetTriggered = (json.get("content") as JSONObject).has("resetInterruptionTaskIndex")
                     if (isResetTriggered)
@@ -96,10 +96,27 @@ class ArithmeticActivity : AbstractServiceView() {
                      // preferably one they have not yet seen.
                     }
                 }
-                else // only has interruptionLength in content
+                else // has interruptionLength in content
                 {
+                    // HoloLag Messages haben nur InterruptionLength in der MSG
+                    var interruptionLength:Long = 0
+                    var delay:Long = 300
 
-                    val interruptionLength = (json.get("content") as Number).toLong().times(1000)
+                    if (json.get("content") is Number)
+                    {
+                        delay = 300
+                        interruptionLength = (json.get("content") as Number).toLong().times(1000)
+                    }
+                    else if (json.get("content") is JSONObject)
+                    {
+                        // HoloSort Messages haben InterruptionLength UND StartDelay im Content
+                        val cont = json.get("content") as JSONObject
+
+                        // delay [ms], intLength [s]
+                        delay = (cont.get("interruptionStartDelay") as Number).toLong()
+                        interruptionLength = (cont.get("interruptionLength") as Number).toLong().times(1000)
+                    }
+
                     println(interruptionLength.toString())
 
                     showFlash(true)
@@ -111,7 +128,7 @@ class ArithmeticActivity : AbstractServiceView() {
                     val timer = Timer()
 
                     // Shows a new equation every 5 seconds, after an initial delay of 500ms
-                    Timer().schedule(500) {
+                    Timer().schedule(delay) {
                         showFlash(false)
                         setTextVisible(true)
 
@@ -143,7 +160,10 @@ class ArithmeticActivity : AbstractServiceView() {
                         jsonObj.put("time", time.toString())
                         jsonObj.put("errorCountInterruption", this@ArithmeticActivity.errorCount)
 
-                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "lens")
+                        // to webclient for HoloLag
+                        // to lens for HoloSort
+                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "web client")
+                        //this@ArithmeticActivity.sendBackEndMessage(jsonObj, "lens")
 
                         runOnUiThread {
                             this@ArithmeticActivity.tableRow?.visibility = View.INVISIBLE
