@@ -161,9 +161,10 @@ class ArithmeticActivity : AbstractServiceView() {
                         jsonObj.put("errorCountInterruption", this@ArithmeticActivity.errorCount)
 
                         // to webclient for HoloLag
+                        //this@ArithmeticActivity.sendBackEndMessage(jsonObj, "web client")
+
                         // to lens for HoloSort
-                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "web client")
-                        //this@ArithmeticActivity.sendBackEndMessage(jsonObj, "lens")
+                        this@ArithmeticActivity.sendBackEndMessage(jsonObj, "lens")
 
                         runOnUiThread {
                             this@ArithmeticActivity.tableRow?.visibility = View.INVISIBLE
